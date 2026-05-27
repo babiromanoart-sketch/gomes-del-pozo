@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gomes Del Pozo Advogados — Processos Trabalhistas</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+  :root {
+    --bg:#F5F3EF;--surface:#FFFFFF;--surface2:#F0EDE8;--border:#E2DDD6;--border2:#CEC9C0;
+    --text:#1C1917;--text2:#6B6560;--text3:#A8A39C;
+    --accent:#2D5A3D;--accent-light:#E8F2EC;
+    --amber:#92400E;--amber-light:#FEF3C7;
+    --blue:#1E3A5F;--blue-light:#DBEAFE;
+    --red:#7F1D1D;--red-light:#FEE2E2;
+    --radius:10px;--radius-lg:14px;
+    --shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md:0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+  .app{display:flex;flex-direction:column;min-height:100vh}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;box-shadow:var(--shadow)}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;color:var(--text);letter-spacing:-0.01em}
+  .logo-icon{width:28px;height:28px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;color:white;font-size:14px}
+  .topbar-actions{display:flex;gap:8px;align-items:center}
+  .sync-status{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:5px}
+  .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3)}
+  .sync-dot.ok{background:#16A34A}.sync-dot.err{background:#DC2626}.sync-dot.loading{background:#D97706;animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+  .main{flex:1;padding:2rem;max-width:980px;margin:0 auto;width:100%}
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
+  .metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;box-shadow:var(--shadow)}
+  .metric-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);margin-bottom:6px}
+  .metric-value{font-size:28px;font-weight:300;color:var(--text);font-family:'DM Mono',monospace;letter-spacing:-0.02em}
+  .metric-value.green{color:var(--accent)}.metric-value.amber{color:var(--amber)}.metric-value.blue{color:var(--blue)}
+  .controls{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;display:flex;gap:10px;align-items:center;margin-bottom:1rem;box-shadow:var(--shadow);flex-wrap:wrap}
+  .search-wrap{flex:1;min-width:200px;position:relative}
+  .search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
+  input[type="text"]{width:100%;padding:8px 10px 8px 34px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:14px;background:var(--bg);color:var(--text);outline:none;transition:border-color 0.15s}
+  input[type="text"]:focus{border-color:var(--accent);background:white}
+  select{padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:13px;background:var(--bg);color:var(--text);outline:none;cursor:pointer}
+  select:focus{border-color:var(--accent)}
+  .btn{padding:8px 16px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;white-space:nowrap}
+  .btn:hover{background:var(--surface2);border-color:var(--border2)}.btn:active{transform:scale(0.98)}
+  .btn-primary{background:var(--accent);color:white;border-color:var(--accent)}.btn-primary:hover{background:#244d34;border-color:#244d34}
+  .btn-danger{color:#A32D2D}.btn-sm{padding:5px 10px;font-size:12px}
+  .list{display:flex;flex-direction:column;gap:8px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);transition:border-color 0.15s}
+  .card:hover{border-color:var(--border2)}.card.expanded{border-color:#9DC4AB}
+  .card-header{padding:0.875rem 1.25rem;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+  .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;letter-spacing:0.02em}
+  .av-waiting{background:var(--amber-light);color:var(--amber)}.av-ready{background:var(--accent-light);color:var(--accent)}.av-distributed{background:var(--blue-light);color:var(--blue)}.av-canceled{background:var(--red-light);color:var(--red)}
+  .card-name{font-weight:500;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card-meta{font-size:12px;color:var(--text3);margin-top:1px;font-family:'DM Mono',monospace;display:flex;align-items:center;gap:4px}
+  .badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:99px;white-space:nowrap;letter-spacing:0.01em;flex-shrink:0}
+  .badge-waiting{background:var(--amber-light);color:var(--amber)}.badge-ready{background:var(--accent-light);color:var(--accent)}.badge-distributed{background:var(--blue-light);color:var(--blue)}.badge-canceled{background:var(--red-light);color:var(--red)}
+  .chevron{color:var(--text3);transition:transform 0.2s;flex-shrink:0}.card.expanded .chevron{transform:rotate(180deg)}
+  .card-body{display:none;padding:0 1.25rem 1.25rem;border-top:1px solid var(--border)}.card.expanded .card-body{display:block}
+  .body-top{display:flex;align-items:center;gap:10px;padding:0.875rem 0 1rem;flex-wrap:wrap}
+  .section-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:10px}
+  .docs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;margin-bottom:1rem}
+  .doc-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all 0.15s;font-size:12px;color:var(--text2);background:var(--bg)}
+  .doc-item:hover{border-color:var(--border2);background:white}.doc-item.ok{border-color:#9DC4AB;background:var(--accent-light);color:var(--accent)}
+  .doc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}.doc-item.ok .doc-dot{background:var(--accent)}.doc-item:not(.ok) .doc-dot{background:var(--border2)}
+  .notes-section{margin-top:0.5rem}
+  textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:13px;background:var(--bg);color:var(--text);resize:vertical;min-height:64px;outline:none;line-height:1.5}
+  textarea:focus{border-color:var(--accent);background:white}
+  .progress-bar{width:80px;height:4px;background:var(--border);border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:6px}
+  .progress-fill{height:100%;background:var(--accent);border-radius:99px;transition:width 0.3s}
+  .divider{width:1px;height:14px;background:var(--border);flex-shrink:0}
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.3);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:100;padding:1rem;opacity:0;pointer-events:none;transition:opacity 0.2s}
+  .overlay.active{opacity:1;pointer-events:all}
+  .modal{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);width:100%;max-width:460px;padding:1.5rem;box-shadow:var(--shadow-md);transform:translateY(8px);transition:transform 0.2s;max-height:90vh;overflow-y:auto}
+  .overlay.active .modal{transform:translateY(0)}
+  .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+  .modal-title{font-size:16px;font-weight:600;letter-spacing:-0.01em}
+  .modal-close{width:28px;height:28px;border:none;background:var(--surface2);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text2);line-height:1}
+  .modal-close:hover{background:var(--border)}
+  .form-row{margin-bottom:14px}.form-row label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:5px}
+  .form-row input,.form-row select,.form-row textarea{width:100%}
+  .modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border)}
+  .lawsuit-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+  .lawsuit-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+  .lawsuit-panel-title{font-size:13px;font-weight:600;color:var(--text2)}
+  .lawsuit-list{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem}
+  .lawsuit-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius)}
+  .lawsuit-color-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .lawsuit-row-name{flex:1;font-size:13px;color:var(--text);font-weight:500}
+  .lawsuit-row-count{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+  .lawsuit-add-row{display:flex;gap:8px;align-items:center}.lawsuit-add-row input{padding:7px 10px;flex:1}
+  .color-strip{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .color-swatch{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color 0.15s;flex-shrink:0}.color-swatch.selected{border-color:var(--text)}
+  .empty{text-align:center;padding:4rem 2rem;color:var(--text3)}.empty-icon{font-size:36px;margin-bottom:12px}.empty h3{font-size:15px;font-weight:500;color:var(--text2);margin-bottom:6px}.empty p{font-size:13px}
+  .loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:200}
+  .loading-screen h2{font-size:16px;font-weight:500;color:var(--text2)}
+  .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media(max-width:640px){.metrics{grid-template-columns:repeat(2,1fr)}.topbar{padding:0 1rem}.main{padding:1rem}.controls{flex-direction:column;align-items:stretch}.search-wrap{min-width:unset}}
+</style>
+</head>
+<body>
+<div class="loading-screen" id="loadingScreen">
+  <div class="spinner"></div>
+  <h2>Carregando dados...</h2>
+</div>
+
+<div class="app" style="display:none" id="appWrapper">
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+      </div>
+      <div>
+        <div>Gomes Del Pozo Advogados</div>
+        <div style="font-size:11px;font-weight:400;color:var(--text3);letter-spacing:0.03em;margin-top:1px">Processos Trabalhistas</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <div class="sync-status"><div class="sync-dot" id="syncDot"></div><span id="syncMsg">Conectando...</span></div>
+      <button class="btn" onclick="toggleLawsuitPanel()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path><path d="M4.93 4.93a10 10 0 0 0 0 14.14"></path></svg>
+        Processos
+      </button>
+      <button class="btn btn-primary" onclick="openClientModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Novo cliente
+      </button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="metrics" id="metrics"></div>
+    <div class="lawsuit-panel" id="lawsuitPanel" style="display:none">
+      <div class="lawsuit-panel-header">
+        <div class="lawsuit-panel-title">Processos cadastrados</div>
+        <button class="btn btn-sm" onclick="toggleLawsuitPanel()">Fechar</button>
+      </div>
+      <div class="lawsuit-list" id="lawsuitList"></div>
+      <div class="lawsuit-add-row">
+        <input type="text" id="newLawsuitName" placeholder="Nome do novo processo..." onkeydown="if(event.key==='Enter')addLawsuit()">
+        <button class="btn btn-primary btn-sm" onclick="addLawsuit()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Adicionar
+        </button>
+      </div>
+      <div class="color-strip" id="colorStrip"></div>
+    </div>
+    <div class="controls">
+      <div class="search-wrap">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="search" placeholder="Buscar por nome..." oninput="render()">
+      </div>
+      <select id="filterStatus" onchange="render()">
+        <option value="">Todos os status</option>
+        <option value="waiting">Aguardando documentos</option>
+        <option value="ready">Pronto para distribuir</option>
+        <option value="distributed">Processo distribuído</option>
+        <option value="canceled">Cancelado</option>
+      </select>
+      <select id="filterLawsuit" onchange="render()">
+        <option value="">Todos os processos</option>
+      </select>
+      <div class="divider"></div>
+      <button class="btn" onclick="exportCSV()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        Exportar CSV
+      </button>
+    </div>
+    <div class="list" id="list"></div>
+  </div>
+</div>
+
+<div class="overlay" id="clientOverlay" onclick="if(event.target===this)closeClientModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="clientModalTitle">Novo cliente</div>
+      <button class="modal-close" onclick="closeClientModal()">×</button>
+    </div>
+    <div class="form-row"><label>Nome completo</label><input type="text" id="fName" placeholder="Nome do cliente" onkeydown="if(event.key==='Enter')saveClient()"></div>
+    <div class="form-row"><label>Processo</label><select id="fLawsuit"></select></div>
+    <div class="form-row"><label>Status do processo</label>
+      <select id="fStatus">
+        <option value="waiting">Aguardando documentos</option>
+        <option value="ready">Pronto para distribuir</option>
+        <option value="distributed">Processo distribuído</option>
+        <option value="canceled">Cancelado</option>
+      </select>
+    </div>
+    <div class="form-row"><label>Número do processo (opcional)</label><input type="text" id="fProcess" placeholder="Ex: 0001234-00.2024.5.02.0001"></div>
+    <div class="form-row"><label>Observações</label><textarea id="fNotes" rows="3" placeholder="Anotações, pendências, contato..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeClientModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveClient()">Salvar cliente</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://vitjzkwlkkbsgvmmelwn.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_iPpuuvdu24PvqGCXDm1Wvg_6tyst7zQ';
+const PRELOADED = [{"id":"1700000000000","name":"Ademaria Rocha Guimarães","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000001","name":"Adriana Aparecida Gomes De Oliveira","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000002","name":"Adriana Da Cunha","lawsuit":"promove","status":"waiting","process":"","notes":"Ver se foi mandado procuração","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000003","name":"Adriele Souza Pereira Martins","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000004","name":"Alcione Cascieli De Souza Silva","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000005","name":"Alessandra Andrigo Bandeira","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000006","name":"Alessandra Aparecida Da Silva","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000007","name":"Alessandra Cezar","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000008","name":"Aline De Moraes Miranda","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000009","name":"Aline Isabel Ferreira Okumura","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000010","name":"Aline Viana Da Silva","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000011","name":"Amanda Gabriela Tavares","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000012","name":"Ana Caroline Cardoso","lawsuit":"promove","status":"distributed","process":"0011388-30.2026.5.15.0038","notes":"OK DISTRIBUIDO - 0011388-30.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000013","name":"Ana Julia De Oliveira","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000014","name":"Ana Luiza Da Silva","lawsuit":"promove","status":"waiting","process":"","notes":"NÃO TEM PROCURAÇÃO NEM DOCUMENTOS. PEDI THAIS LIGAR","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000015","name":"Ana Maria De Castro Penna","lawsuit":"promove","status":"waiting","process":"","notes":"NÃO TEM DECLARAÇÃO NEM PROCURAÇÃO ASSINADA, PEDI PARA THAIS LIGAR","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000016","name":"Andreia Alloca De Moraes Pereira","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000017","name":"Andreia Amaral","lawsuit":"promove","status":"waiting","process":"","notes":"OK NÃO TEM NENHUM DOCUMENTO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000018","name":"Andreia Anita De Oliveira Rodrigues","lawsuit":"promove","status":"distributed","process":"","notes":"OK PARA DISTRIBUIR","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000019","name":"Andreia De Morais Dantas Do Carmo","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000020","name":"Andressa Gonçalves De Oliveira","lawsuit":"promove","status":"ready","process":"","notes":"Ok pronto para fazer o processo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000021","name":"Andressa Marfaragi Bulgarelli","lawsuit":"promove","status":"distributed","process":"0011341-56.2026.5.15.0038","notes":"JÁ DISTRIBUI 0011341-56.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000022","name":"Andrielly Gonçalves De Jesus","lawsuit":"promove","status":"distributed","process":"0011308-66.2026.5.15.0038","notes":"DISTRIBUIMOS 0011308-66.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000023","name":"Angela Maria De Lima Cezar Carvalho","lawsuit":"promove","status":"distributed","process":"","notes":"JÁ DISTRIBUI 0011342.41.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000024","name":"Angela Pedroso Da Conceição","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000025","name":"Beatriz Franco Moyses","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000026","name":"Benedita Aparecida Pedroso Morais","lawsuit":"promove","status":"waiting","process":"","notes":"Declaração enviada por email","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000027","name":"Brenda Monteiro De Moraes Soares","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000028","name":"Brenda Priscila Pereira De Lima Cezar","lawsuit":"promove","status":"distributed","process":"0011389-15.2026.5.15.0038","notes":"OK DISTRIBUIDO 0011389-15.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000029","name":"Brenda Stefanie Nunes Lima Quarterone","lawsuit":"promove","status":"waiting","process":"","notes":"FALEI COM ELA N WHATS 12 DE MAIO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000030","name":"Bruna Frangiotti Araujo","lawsuit":"promove","status":"distributed","process":"","notes":"JÁ DISTRIBUI 0011342.41.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000031","name":"Bruna Maria Postigo Guidetti","lawsuit":"promove","status":"distributed","process":"0011308-66.2026.5.15.0038","notes":"DISTRIBUIDO 0011308-66.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000032","name":"Bruna Soares De Camargo","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000033","name":"Calina Ferreira De Oliveira","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000034","name":"Camila Moraes Neves","lawsuit":"promove","status":"distributed","process":"0011390-97.2026.5.15.0038","notes":"OK DISTRIBUIDO 0011390-97.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000035","name":"Carina Clementina Da Silva","lawsuit":"promove","status":"distributed","process":"","notes":"DISTRIBUIDO 011330.27.2026.5.15.0038.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000036","name":"Cassia Maria Da Silva Alves","lawsuit":"promove","status":"waiting","process":"","notes":"OK NÃO TEM DOCUMENTAÇÃO NEM PROCURAÇÃO NEM DECLARAÇÃO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000037","name":"Cassia Regina Damasceno Pereira","lawsuit":"promove","status":"distributed","process":"","notes":"JÁ DISTRIBUI 0011342.41.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000038","name":"Catia Cardoso Santos","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000039","name":"Célia Rocha Dos Santos","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000040","name":"Claudia Andreia Morello Gimenes","lawsuit":"promove","status":"distributed","process":"","notes":"OK DISTRIBUIDO 0011394-.37.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000041","name":"Cristina Moura Ribeiro De Brito","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000042","name":"Daiana Carolina De Moraes","lawsuit":"promove","status":"distributed","process":"0011391-82.2026.5.15.0038","notes":"OK DISTRIBUIDO 0011391-82.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000043","name":"Daiane Cristina Domingues","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000044","name":"Daiane Salles Cardoso","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000045","name":"Daniela Cristina Pinheiro Da Silva Pinto","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000046","name":"Daniela Primavera Martins","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000047","name":"Daniele Aparecida Souza Alves","lawsuit":"promove","status":"distributed","process":"0011315-58.2026.5.15.0038","notes":"DISTRIBUIDO 0011315-58.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000048","name":"Denize Aparecida De Sousa Gonzales","lawsuit":"promove","status":"distributed","process":"0011392-67.2026.5.15.0038","notes":"DISTRIBUIDO 0011392-67.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000049","name":"Deyse Dandara Da Silva Teixeira De Godoi","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000050","name":"Diego Alves","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000051","name":"Edna Aparecida De Oliveira","lawsuit":"promove","status":"distributed","process":"","notes":"OK DISTRIBUIDO 0011394-.37.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000052","name":"Elaine Alves Almeida","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000053","name":"Elaine Aparecida De Oliveira Abdo","lawsuit":"promove","status":"ready","process":"","notes":"OK PROCESSO PRONTO PARA FAZER","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000054","name":"Eliana Pedroso De Oliveira","lawsuit":"promove","status":"distributed","process":"","notes":"PARA DISTRIBUIR","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000055","name":"Eliene Da Paixão Dos Santos","lawsuit":"promove","status":"ready","process":"","notes":"OK JA ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000056","name":"Elisabete De Oliveira Martins","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000057","name":"Elisangela Aparecida Silva Franco","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000058","name":"Elisangela Silveira","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000059","name":"Eloisa Aparecida Briz Lopes","lawsuit":"promove","status":"ready","process":"","notes":"OK JA ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000060","name":"Emily Cristine Contato De Oliveira","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000061","name":"Erica Caroline De Campos","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000062","name":"Estefania Frazao","lawsuit":"promove","status":"waiting","process":"","notes":"Pedindo contato para Tais","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000063","name":"Fabiana Spadin Santana","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000064","name":"Fatima Ap Correa Carvalho","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000065","name":"Fernanda Dantas Da Silva","lawsuit":"promove","status":"waiting","process":"","notes":"mandei procuração por email 12/05","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000066","name":"Fernanda Ferreira Lima Saito","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000067","name":"Fernanda Goncalves Santana","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000068","name":"Flávia Ellen Laureano Da Silva","lawsuit":"promove","status":"ready","process":"","notes":"OK PROCESSO PRONTO PARA FAZER","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000069","name":"Franciane Vancin Alves De Oliveira","lawsuit":"promove","status":"ready","process":"","notes":"JÁ ESTAMOS FAZENDO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000070","name":"Francisca De Assis Nonata Dos Santos","lawsuit":"promove","status":"ready","process":"","notes":"OK já estamos fazendo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000071","name":"Francisca Edna Lopes","lawsuit":"promove","status":"ready","process":"","notes":"JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000072","name":"Gabriela Cristina De Almeida Rodrigues Não Assinou Procuração","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000073","name":"Gabriela Garcia Guedes","lawsuit":"promove","status":"distributed","process":"0011308-66.2026.5.15.0038","notes":"DISTRIBUIDO 0011308-66.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000074","name":"Gabrielle Da Rosa Veroneze","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000075","name":"Gabrielly Vitória Nogueira De Araújo","lawsuit":"promove","status":"waiting","process":"","notes":"OK PEDI PARA THAIS CONTATO NÃO ASSINOU PROCURAÇÃO 13 DE MAIO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000076","name":"Giovana Rosa Cirico","lawsuit":"promove","status":"distributed","process":"0011318-13.2026.5.15.0038","notes":"DISTRIBUIDO 0011318-13.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000077","name":"Gisele Maria Marcolino Silva","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000078","name":"Gislaine Aragao Da Silva Fagundes Ok Já Estamos Fazendo Processo","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000079","name":"Gleice De Oliveira Faria","lawsuit":"promove","status":"ready","process":"","notes":"OK JA ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000080","name":"Graciele Lais De Lima Ferreira","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000081","name":"Grasiela Nonato Zamora Garcia","lawsuit":"promove","status":"ready","process":"","notes":"ja está fazendo processo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000082","name":"Heloisa Freitas Hipolito","lawsuit":"promove","status":"waiting","process":"","notes":"FALTA PROCURAÇÃO E DECLARAÇÃO ASSINADA","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000083","name":"Heloisa Gabriele De Lima","lawsuit":"promove","status":"ready","process":"","notes":"OK PROCESSO PRONTO PARA FAZER","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000084","name":"Iamara Da Silva Alves","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000085","name":"Iara Araujo De Souza","lawsuit":"promove","status":"waiting","process":"","notes":"PEDI CONTATO PARA THAIS","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000086","name":"Ilza Maria Dos Santos Belinasi","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000087","name":"Ingrid Caroline Geraldes Da Silva","lawsuit":"promove","status":"ready","process":"","notes":"OK PROCESSO PRONTO PARA FAZER","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000088","name":"Isabela Da Silva Cardoso -Pedi Contato Para Thais","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000089","name":"Isabela Sanches","lawsuit":"promove","status":"distributed","process":"0011005-52.2026.5.15.0038","notes":"DISTRIBUIDO 0011005-52.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000090","name":"Isabelle Dos Santos Sousa","lawsuit":"promove","status":"canceled","process":"","notes":"OK PEDIU PARA CANCELAR","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000091","name":"Ivone Honorato Mendes","lawsuit":"promove","status":"ready","process":"","notes":"ok estamos fazendo processo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000092","name":"Jessica Aparecida Da Conceição","lawsuit":"promove","status":"distributed","process":"","notes":"OK gravida dra. Tamara vai distribuir","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000093","name":"Jessica De Oliveira Couto","lawsuit":"promove","status":"ready","process":"","notes":"JA ESTAMOS FAZENDO O PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000094","name":"Jocilene Aparecida Mourao","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000095","name":"Joice Carolina Da Costa","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000096","name":"Joice Luana De Oliveira Lima","lawsuit":"promove","status":"distributed","process":"","notes":"processo distribuido","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000097","name":"Josilaine Bueno Atanazio","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000098","name":"Julen Ferreira De Souza","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000099","name":"Julia Dos Santos Silveira","lawsuit":"promove","status":"ready","process":"","notes":"OK PRONTO ESTAMOS FAZENDO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000100","name":"Julia Kazuko Kawahata","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000101","name":"Julia Oliveira Silva","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000102","name":"Julia Ribeiro Maciel Leme","lawsuit":"promove","status":"distributed","process":"0011047-04.2026.5.15.0038","notes":"DISTRIBUIDO 0011047-04.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000103","name":"Julia Victoria Viana Leite","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000104","name":"Juliana De Lourdes Rodrigues Fagundes","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000105","name":"Juliana Doratiotto Barbosa","lawsuit":"promove","status":"waiting","process":"","notes":"OK FALTA ASSINAR PROCURAÇÃO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000106","name":"Juliana Ramos Vieira","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000107","name":"Juliane Adriele Silva Moreira","lawsuit":"promove","status":"distributed","process":"","notes":"OK gravida Dra. Tamara vai distribuir","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000108","name":"Juranice Costa Moreira Almeida Ok Mandei Procuração Vai Mandar Assinada","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000109","name":"Jurema Pereira Cezar Gonçalves","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000110","name":"Karen Yuri Aliaga Alves -Ok Pedi Contato Para Thais","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000111","name":"Karina Moraes Silva","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000112","name":"Keyla Mirelly Da Silva Inacio","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000113","name":"Laiza Mirela Lopes Medeiros","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000114","name":"Laura Cordeiro Santos Alves","lawsuit":"promove","status":"ready","process":"","notes":"PRONTO PARA FAZER PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000115","name":"Lêda Sousa De Oliveira","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000116","name":"Leticia Costa Santos","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000117","name":"Lilian Alves Da Silva","lawsuit":"promove","status":"ready","process":"","notes":"OK pronta para fazer processo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000118","name":"Liliane Aparecida De Oliveira Lima","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000119","name":"Liliane Aparecida Rodrigues Dos Santos","lawsuit":"promove","status":"ready","process":"","notes":"OK pronta para fazer processo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000120","name":"Lorena Cordeiro Santos Alves","lawsuit":"promove","status":"ready","process":"","notes":"OK pronto para fazer processo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000121","name":"Luana Aparecida De Oliveira Preto","lawsuit":"promove","status":"waiting","process":"","notes":"contato thais","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000122","name":"Luana Cristina Ribas Gomes Shinkawa","lawsuit":"promove","status":"ready","process":"","notes":"OK pronto para fazer processo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000123","name":"Luana Da Silva Freire Dos Santos","lawsuit":"promove","status":"distributed","process":"","notes":"OK PARA DISTRIBUIR","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000124","name":"Luana Priscila Gomes Moreira","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000125","name":"Lucia Ivoglo Da Costa Santos","lawsuit":"promove","status":"ready","process":"","notes":"pronto para fazer processo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000126","name":"Luciana Cristina Rocha Miranda","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000127","name":"Luis Felipe Araujo Sato","lawsuit":"promove","status":"waiting","process":"","notes":"contato thais","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000128","name":"Luzia Ramos De Oliveira","lawsuit":"promove","status":"waiting","process":"","notes":"contato thais","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000129","name":"Maiara Machado","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000130","name":"Marcela Umbelino Soares","lawsuit":"promove","status":"waiting","process":"","notes":"NÃO RESPONDE","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000131","name":"Marcia Dos Santos Diniz","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000132","name":"Marcia Lopes Da Silva","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000133","name":"Margarett Rose Bueno Marques Dos Santos","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000134","name":"Maria Aparecida De Almeida","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000135","name":"Maria Aparecida De Lima Campos","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000136","name":"Maria De Lourdes Do Nascimento","lawsuit":"promove","status":"waiting","process":"","notes":"OK","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000137","name":"Maria Elena Cabrera Jorge","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000138","name":"Maria Fabiana Rodrigues","lawsuit":"promove","status":"waiting","process":"","notes":"OK","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000139","name":"Maria Helena De Campos Taffuri","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000140","name":"Maria Janete Da Silva Lima","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000141","name":"Maria Luiza Da Silva Cezar","lawsuit":"promove","status":"waiting","process":"","notes":"OK","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000142","name":"Maria Rosina Do Carmo Siqueira","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000143","name":"Maria Sangela De Carvalho","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000144","name":"Maricea Lima Silva","lawsuit":"promove","status":"ready","process":"","notes":"OK estamos fazendo processo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000145","name":"Maricelia Vitor Dos Santos","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000146","name":"Marilda Dos Santos","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000147","name":"Marilu De Almeida Arruda Remer","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000148","name":"Michele Rodrigues De Souza","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000149","name":"Milene Priscila Neves Naldi","lawsuit":"promove","status":"waiting","process":"","notes":"OK","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000150","name":"Miraci Silva Do Nascimento","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000151","name":"Mirella Stephanie De Lima","lawsuit":"promove","status":"distributed","process":"0011317-28.2026.5.15.0038","notes":"DISTRIBUIDO 0011317-28.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000152","name":"Miriam Fernanda Siqueira Lisboa Pires","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000153","name":"Mirivani Da Silva","lawsuit":"promove","status":"ready","process":"","notes":"OK - JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000154","name":"Mirla Theodora Melli","lawsuit":"promove","status":"canceled","process":"","notes":"CANCELAR JÁ ENTROU COM ADVOGADO PARTICULAR","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000155","name":"Monica Aparecida Pister","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000156","name":"Monica Cordeiro Santos Nishimura","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000157","name":"Monica De Lima","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000158","name":"Nathanny Selma Reis Silva Mandei Procuração E Declaração Vai Assinar","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000159","name":"Nicole Caroline Molina","lawsuit":"promove","status":"waiting","process":"","notes":"OK","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000160","name":"Nicoly Rodrigues Pinto","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000161","name":"Noeni Aparecida Pereira","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO O PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000162","name":"Pamela Aparecida Fernandez Silva","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000163","name":"Patricia Gutierrez Iglesias Rodrigues","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000164","name":"Patrick Dom Da Silva","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000165","name":"Paula Boer","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000166","name":"Priscila Bernadette Tavares Marcassa","lawsuit":"promove","status":"distributed","process":"0011311-21.2026.5.15.0038","notes":"DISTRIBUIDO 0011311-21.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000167","name":"Priscila Vancin Alves De Oliveira","lawsuit":"promove","status":"ready","process":"","notes":"OK já estamos fazendo processo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000168","name":"Rafaela Goncalves De Jesus","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000169","name":"Rafaella Ovando","lawsuit":"promove","status":"waiting","process":"","notes":"MANDOU DOCUMENTOS - FALTA PROCURAÇÃO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000170","name":"Raiana Santos Da Silva","lawsuit":"promove","status":"waiting","process":"","notes":"OK","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000171","name":"Raiele Godoy Da Silva Santos","lawsuit":"promove","status":"waiting","process":"","notes":"OK","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000172","name":"Raissa Elen Miranda Do Carmo","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000173","name":"Raquel Da Silva Toledo Piza","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000174","name":"Rebeca Gonçalves Santana","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000175","name":"Regina Aparecida Ferreira Batista","lawsuit":"promove","status":"ready","process":"","notes":"já estamos fazendo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000176","name":"Renata Dantas Santos Cabral","lawsuit":"promove","status":"waiting","process":"","notes":"PEDIMOS CONTATO PARA THAIS","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000177","name":"Renata Maria De Oliveira Dorta","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000178","name":"Renata Maria De Souza","lawsuit":"promove","status":"waiting","process":"","notes":"PROCURAÇÃO ENVIADA POR EMAIL","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000179","name":"Rita De Cassia Conceição Pereira","lawsuit":"promove","status":"ready","process":"","notes":"JA ESTAMOS FAZENDO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000180","name":"Roberta Fatima De Moraes","lawsuit":"promove","status":"waiting","process":"","notes":"THAIS NÃO LOCALIZOU CONTATOPedir contato para Thais","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000181","name":"Rosana Santos Cardoso Pacheco","lawsuit":"promove","status":"distributed","process":"0011015-96.2026.5.15.0038","notes":"DISTRIBUIDO 0011015-96.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000182","name":"Samantha Regina Catanha Pimentel","lawsuit":"promove","status":"distributed","process":"0011394-37.2026.5.15.0038","notes":"OK DISTRIBUIDO 0011394-37.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000183","name":"Sandra Aparecida Salles","lawsuit":"promove","status":"waiting","process":"","notes":"MANDEI MENSAGEM","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000184","name":"Selma Aparecida Dos Reis","lawsuit":"promove","status":"waiting","process":"","notes":"MANDEI procuração e declaração vai assinar","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000185","name":"Shirlei Vieira","lawsuit":"promove","status":"waiting","process":"","notes":"JA MANDEI MENSAGEM NO WHATS PEDINDO PROCURAÇÃO E DECLARAÇÃO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000186","name":"Silvana Aparecida Flores Roza","lawsuit":"promove","status":"canceled","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000187","name":"Silvana Chaim Baratella","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000188","name":"Simone Casado Grasson","lawsuit":"promove","status":"distributed","process":"0011393-52.2026.5.15.0038","notes":"DISTRIBUIDO 0011393-52.2026.5.15.0038","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000189","name":"Simone De Moraes Pires","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000190","name":"Sueli Cristina Lima Kalinsqui De Almeida","lawsuit":"promove","status":"ready","process":"","notes":"OK PROCESSO PRONTO PARA FAZER","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000191","name":"Suiani Castro","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000192","name":"Taciana Cristina Bastos De Andrade","lawsuit":"promove","status":"ready","process":"","notes":"OK JA ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000193","name":"Talita Jadach De Oliveira Jardim","lawsuit":"promove","status":"ready","process":"","notes":"OK JÁ ESTAMOS FAZENDO PROCESSO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000194","name":"Talita Maiara De Oliveira Costa","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000195","name":"Tatiana Aparecida Vergara De Oliveira Ok Já Estamos Fazendo","lawsuit":"promove","status":"waiting","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000196","name":"Tatiana De Oliveira De Bem","lawsuit":"promove","status":"waiting","process":"","notes":"PEDIR CONTATO THAIS","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000197","name":"Tatiana Dominici Chiarioni","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000198","name":"Tatiane Aparecida De Souza","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000199","name":"Tatiane Moreira Silva","lawsuit":"promove","status":"ready","process":"","notes":"JÁ ESTAMOS FAZENDO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000200","name":"Tayla Katrine Do Prado Dalarme","lawsuit":"promove","status":"waiting","process":"","notes":"PEDIR CONTATO THAIS","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000201","name":"Thaina Godoi Oliveira","lawsuit":"promove","status":"waiting","process":"","notes":"NÃO RESPONDE","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000202","name":"Thainara Mazilda Gonçalves","lawsuit":"promove","status":"ready","process":"","notes":"Ja estamos fazendo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000203","name":"Tiffani Arasuelo Venancio","lawsuit":"promove","status":"ready","process":"","notes":"OK ESTAMOS FAZENDO A AÇÃO","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000204","name":"Thamires Isabela Castro Batista","lawsuit":"promove","status":"waiting","process":"","notes":"VOU PEDIR CONTATO THAIS","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000205","name":"Vivian Aparecida Ferreira","lawsuit":"promove","status":"ready","process":"","notes":"OK ja estamos fazendo processo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000206","name":"Viviane De Jesus Terron Massoni","lawsuit":"promove","status":"ready","process":"","notes":"OK Ja estamos fazendo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000207","name":"Viviane Dos Santos Araujo Melo","lawsuit":"promove","status":"ready","process":"","notes":"OK já estamos fazendo","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000208","name":"Viviane Franco Lopes De Oliveira","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000209","name":"Viviane Sanchez Novaes","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"},{"id":"1700000000210","name":"Walquiria De Jesus Silva","lawsuit":"promove","status":"distributed","process":"","notes":"","docs":{},"createdAt":"26/05/2026"}];
+
+const PALETTE = [
+  {bg:'#EDE9FE',text:'#4C1D95',dot:'#7C3AED'},
+  {bg:'#FCE7F3',text:'#831843',dot:'#DB2777'},
+  {bg:'#DBEAFE',text:'#1E3A5F',dot:'#2563EB'},
+  {bg:'#D1FAE5',text:'#064E3B',dot:'#059669'},
+  {bg:'#FEF3C7',text:'#78350F',dot:'#D97706'},
+  {bg:'#FFE4E6',text:'#881337',dot:'#E11D48'},
+  {bg:'#E0F2FE',text:'#0C4A6E',dot:'#0284C7'},
+  {bg:'#F3E8FF',text:'#581C87',dot:'#9333EA'},
+  {bg:'#ECFDF5',text:'#14532D',dot:'#16A34A'},
+  {bg:'#FFF7ED',text:'#7C2D12',dot:'#EA580C'},
+];
+
+const FIXED_COLORS = {
+  promove:     {bg:'#DBEAFE',text:'#1E3A5F',dot:'#1D4ED8'},
+  icvv:        {bg:'#E0F2FE',text:'#0C4A6E',dot:'#0284C7'},
+  amorEmGotas: {bg:'#FFE4E6',text:'#881337',dot:'#E11D48'},
+  unisau:      {bg:'#EDE9FE',text:'#4C1D95',dot:'#7C3AED'},
+};
+
+const DOCS = ['RG/CPF','Procuração','CTPS','Comprovante de residência','FGTS','Extrato bancário','Holerites','Outros documentos'];
+const STATUS_LABEL = {waiting:'Aguardando documentos',ready:'Pronto para distribuir',distributed:'Processo distribuído',canceled:'Cancelado'};
+const STATUS_BADGE = {waiting:'badge-waiting',ready:'badge-ready',distributed:'badge-distributed',canceled:'badge-canceled'};
+const AV_CLASS     = {waiting:'av-waiting',ready:'av-ready',distributed:'av-distributed',canceled:'av-canceled'};
+const LAWSUIT_LABEL = {promove:'Promove',icvv:'ICVV',amorEmGotas:'Amor em Gotas',unisau:'Unisau'};
+
+let clients  = [];
+let lawsuits = [
+  {id:'promove',     name:'Promove',       color:FIXED_COLORS.promove},
+  {id:'icvv',        name:'ICVV',          color:FIXED_COLORS.icvv},
+  {id:'amorEmGotas', name:'Amor em Gotas', color:FIXED_COLORS.amorEmGotas},
+  {id:'unisau',      name:'Unisau',        color:FIXED_COLORS.unisau},
+];
+let expanded = new Set();
+let editId   = null;
+let selectedColor = 0;
+let lawsuitPanelOpen = false;
+
+/* ─── SUPABASE API ─── */
+async function sbFetch(path, opts={}) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    ...opts,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer || '',
+      ...opts.headers
+    }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const txt = await res.text();
+  return txt ? JSON.parse(txt) : null;
+}
+
+function setSyncStatus(state, msg) {
+  const dot = document.getElementById('syncDot');
+  const el  = document.getElementById('syncMsg');
+  dot.className = 'sync-dot ' + state;
+  el.textContent = msg;
+}
+
+/* ─── LOAD DATA ─── */
+async function loadData() {
+  try {
+    setSyncStatus('loading', 'Carregando...');
+    const rows = await sbFetch('clients?select=*&order=name.asc');
+    if (rows && rows.length > 0) {
+      clients = rows.map(r => ({
+        id: r.id, name: r.name, lawsuit: r.lawsuit,
+        status: r.status, process: r.process||'',
+        notes: r.notes||'', docs: r.docs||{},
+        createdAt: r.created_at||''
+      }));
+      setSyncStatus('ok', 'Sincronizado');
+    } else {
+      // First time: seed with preloaded data
+      setSyncStatus('loading', 'Importando clientes...');
+      await seedData();
+    }
+  } catch(e) {
+    setSyncStatus('err', 'Erro de conexão');
+    console.error(e);
+  }
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('appWrapper').style.display = 'flex';
+  render();
+}
+
+async function seedData() {
+  // Insert in batches of 50
+  const batch = 50;
+  for (let i=0; i<PRELOADED.length; i+=batch) {
+    const chunk = PRELOADED.slice(i,i+batch).map(c=>({
+      id:c.id, name:c.name, lawsuit:c.lawsuit, status:c.status,
+      process:c.process||'', notes:c.notes||'', docs:c.docs||{}, created_at:c.createdAt||''
+    }));
+    await sbFetch('clients', {method:'POST', prefer:'resolution=ignore-duplicates', body:JSON.stringify(chunk)});
+  }
+  const rows = await sbFetch('clients?select=*&order=name.asc');
+  clients = rows.map(r=>(({id:r.id,name:r.name,lawsuit:r.lawsuit,status:r.status,process:r.process||'',notes:r.notes||'',docs:r.docs||{},createdAt:r.created_at||''})));
+  setSyncStatus('ok', 'Pronto');
+}
+
+/* ─── CRUD ─── */
+async function upsertClient(c) {
+  try {
+    setSyncStatus('loading','Salvando...');
+    await sbFetch('clients?id=eq.'+c.id, {
+      method:'PATCH', prefer:'return=minimal',
+      body: JSON.stringify({name:c.name,lawsuit:c.lawsuit,status:c.status,process:c.process,notes:c.notes,docs:c.docs,created_at:c.createdAt})
+    });
+    setSyncStatus('ok','Salvo ✓');
+  } catch(e) { setSyncStatus('err','Erro ao salvar'); }
+}
+
+async function insertClient(c) {
+  try {
+    setSyncStatus('loading','Salvando...');
+    await sbFetch('clients', {
+      method:'POST', prefer:'return=minimal',
+      body: JSON.stringify([{id:c.id,name:c.name,lawsuit:c.lawsuit,status:c.status,process:c.process,notes:c.notes,docs:c.docs,created_at:c.createdAt}])
+    });
+    setSyncStatus('ok','Salvo ✓');
+  } catch(e) { setSyncStatus('err','Erro ao salvar'); }
+}
+
+async function deleteClientDb(id) {
+  try {
+    await sbFetch('clients?id=eq.'+id, {method:'DELETE'});
+    setSyncStatus('ok','Removido');
+  } catch(e) { setSyncStatus('err','Erro ao remover'); }
+}
+
+/* ─── HELPERS ─── */
+function getLawsuit(id) { return lawsuits.find(l=>l.id===id) || {name:id,color:PALETTE[0]}; }
+function initials(name) { return name.trim().split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join(''); }
+
+/* ─── LAWSUIT PANEL ─── */
+function toggleLawsuitPanel() {
+  lawsuitPanelOpen=!lawsuitPanelOpen;
+  document.getElementById('lawsuitPanel').style.display=lawsuitPanelOpen?'block':'none';
+  if(lawsuitPanelOpen) renderLawsuitPanel();
+}
+
+function renderLawsuitPanel() {
+  renderColorStrip();
+  const list=document.getElementById('lawsuitList');
+  list.innerHTML=lawsuits.map(l=>{
+    const count=clients.filter(c=>c.lawsuit===l.id).length;
+    return `<div class="lawsuit-row">
+      <div class="lawsuit-color-dot" style="background:${l.color.dot}"></div>
+      <div class="lawsuit-row-name">${l.name}</div>
+      <div class="lawsuit-row-count">${count} cliente${count!==1?'s':''}</div>
+      <button class="btn btn-sm btn-danger" onclick="removeLawsuit('${l.id}')" ${count>0?'disabled style="opacity:0.35;cursor:not-allowed"':''}>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path></svg>
+      </button>
+    </div>`;
+  }).join('');
+  updateLawsuitFilter(); updateLawsuitSelects();
+}
+
+function renderColorStrip() {
+  document.getElementById('colorStrip').innerHTML=PALETTE.map((p,i)=>`<div class="color-swatch${selectedColor===i?' selected':''}" style="background:${p.dot}" onclick="selectColor(${i})"></div>`).join('');
+}
+function selectColor(i){selectedColor=i;renderColorStrip();}
+
+function addLawsuit() {
+  const name=document.getElementById('newLawsuitName').value.trim();
+  if(!name) return;
+  const id='ls_'+Date.now();
+  lawsuits.push({id,name,color:PALETTE[selectedColor]});
+  document.getElementById('newLawsuitName').value='';
+  selectedColor=(selectedColor+1)%PALETTE.length;
+  renderLawsuitPanel(); render();
+}
+
+function removeLawsuit(id) {
+  if(clients.filter(c=>c.lawsuit===id).length>0) return;
+  if(!confirm('Remover este processo?')) return;
+  lawsuits=lawsuits.filter(l=>l.id!==id);
+  renderLawsuitPanel(); render();
+}
+
+function updateLawsuitFilter() {
+  const sel=document.getElementById('filterLawsuit');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Todos os processos</option>'+lawsuits.map(l=>`<option value="${l.id}"${cur===l.id?' selected':''}>${l.name}</option>`).join('');
+}
+
+function updateLawsuitSelects() {
+  const sel=document.getElementById('fLawsuit');
+  if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML=lawsuits.map(l=>`<option value="${l.id}"${cur===l.id?' selected':''}>${l.name}</option>`).join('');
+}
+
+/* ─── CLIENT MODAL ─── */
+function openClientModal(id=null) {
+  editId=id; updateLawsuitSelects();
+  document.getElementById('clientModalTitle').textContent=id?'Editar cliente':'Novo cliente';
+  if(id) {
+    const c=clients.find(x=>x.id===id);
+    document.getElementById('fName').value=c.name;
+    document.getElementById('fLawsuit').value=c.lawsuit||'';
+    document.getElementById('fStatus').value=c.status;
+    document.getElementById('fProcess').value=c.process||'';
+    document.getElementById('fNotes').value=c.notes||'';
+  } else {
+    document.getElementById('fName').value='';
+    document.getElementById('fLawsuit').value=lawsuits[0]?.id||'';
+    document.getElementById('fStatus').value='waiting';
+    document.getElementById('fProcess').value='';
+    document.getElementById('fNotes').value='';
+  }
+  document.getElementById('clientOverlay').classList.add('active');
+  setTimeout(()=>document.getElementById('fName').focus(),80);
+}
+
+function closeClientModal() { document.getElementById('clientOverlay').classList.remove('active'); editId=null; }
+
+async function saveClient() {
+  const name=document.getElementById('fName').value.trim();
+  if(!name) return;
+  const lawsuit=document.getElementById('fLawsuit').value;
+  const status=document.getElementById('fStatus').value;
+  const process=document.getElementById('fProcess').value.trim();
+  const notes=document.getElementById('fNotes').value.trim();
+  if(editId) {
+    const c=clients.find(x=>x.id===editId);
+    Object.assign(c,{name,lawsuit,status,process,notes});
+    await upsertClient(c);
+  } else {
+    const c={id:Date.now().toString(),name,lawsuit,status,process,notes,docs:{},createdAt:new Date().toLocaleDateString('pt-BR')};
+    clients.unshift(c);
+    await insertClient(c);
+  }
+  closeClientModal(); render();
+}
+
+/* ─── DOCS ─── */
+async function toggleDoc(id, doc) {
+  const c=clients.find(x=>x.id===id);
+  c.docs=c.docs||{};
+  c.docs[doc]=!c.docs[doc];
+  const key=doc.replace(/[^a-zA-Z0-9]/g,'_');
+  const el=document.getElementById('doc-'+id+'-'+key);
+  if(el){el.className='doc-item'+(c.docs[doc]?' ok':'');el.querySelector('.doc-dot').style.background=c.docs[doc]?'var(--accent)':'var(--border2)';}
+  updateCardMeta(id); updateMetrics();
+  await upsertClient(c);
+}
+
+function updateCardMeta(id) {
+  const c=clients.find(x=>x.id===id);
+  const ok=DOCS.filter(d=>c.docs&&c.docs[d]).length;
+  const pct=Math.round(ok/DOCS.length*100);
+  const meta=document.getElementById('meta-'+id);
+  const fill=document.getElementById('fill-'+id);
+  if(meta) meta.textContent=ok+'/'+DOCS.length+' docs';
+  if(fill) fill.style.width=pct+'%';
+}
+
+async function updateStatus(id,val) {
+  const c=clients.find(x=>x.id===id); c.status=val;
+  renderCard(id); updateMetrics();
+  await upsertClient(c);
+}
+
+async function updateLawsuitInline(id,val) {
+  const c=clients.find(x=>x.id===id); c.lawsuit=val;
+  renderCard(id);
+  await upsertClient(c);
+}
+
+async function updateNotes(id,val) {
+  const c=clients.find(x=>x.id===id); c.notes=val;
+  await upsertClient(c);
+}
+
+async function deleteClient(id) {
+  if(!confirm('Remover este cliente permanentemente?')) return;
+  clients=clients.filter(x=>x.id!==id);
+  expanded.delete(id);
+  render();
+  await deleteClientDb(id);
+}
+
+/* ─── EXPAND ─── */
+function toggleExpand(id) {
+  if(expanded.has(id)) expanded.delete(id); else expanded.add(id);
+  renderCard(id);
+}
+
+/* ─── CARD HTML ─── */
+function cardHTML(c) {
+  const docs=c.docs||{};
+  const ok=DOCS.filter(d=>docs[d]).length;
+  const pct=Math.round(ok/DOCS.length*100);
+  const l=getLawsuit(c.lawsuit);
+  return `
+    <div class="card-header" onclick="toggleExpand('${c.id}')">
+      <div class="avatar ${AV_CLASS[c.status]}">${initials(c.name)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="card-name">${c.name}</div>
+        <div class="card-meta">
+          <span id="meta-${c.id}">${ok}/${DOCS.length} docs</span>
+          <div class="progress-bar"><div class="progress-fill" id="fill-${c.id}" style="width:${pct}%"></div></div>
+          ${c.process?`<span style="margin-left:4px;color:var(--text3)">· ${c.process}</span>`:''}
+        </div>
+      </div>
+      <span class="badge ${STATUS_BADGE[c.status]}" style="margin-right:4px">${STATUS_LABEL[c.status]}</span>
+      <span class="badge" style="background:${l.color.bg};color:${l.color.text};margin-right:8px">${l.name}</span>
+      <button class="btn btn-sm" onclick="event.stopPropagation();openClientModal('${c.id}')" title="Editar">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+      </button>
+      <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteClient('${c.id}')" title="Remover">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>
+      </button>
+      <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </div>
+    <div class="card-body">
+      <div class="body-top">
+        <span style="font-size:12px;color:var(--text2);font-weight:500">Status:</span>
+        <select onchange="updateStatus('${c.id}',this.value)" style="font-size:13px" onclick="event.stopPropagation()">
+          ${Object.entries(STATUS_LABEL).map(([k,v])=>`<option value="${k}"${c.status===k?' selected':''}>${v}</option>`).join('')}
+        </select>
+        <span style="font-size:12px;color:var(--text2);font-weight:500;margin-left:8px">Processo:</span>
+        <select onchange="updateLawsuitInline('${c.id}',this.value)" style="font-size:13px" onclick="event.stopPropagation()">
+          ${lawsuits.map(ls=>`<option value="${ls.id}"${c.lawsuit===ls.id?' selected':''}>${ls.name}</option>`).join('')}
+        </select>
+        ${c.createdAt?`<span style="font-size:11px;color:var(--text3);margin-left:auto">Cadastrado em ${c.createdAt}</span>`:''}
+      </div>
+      <div class="section-label">Documentos recebidos</div>
+      <div class="docs-grid">
+        ${DOCS.map(d=>{
+          const key=d.replace(/[^a-zA-Z0-9]/g,'_');
+          const isOk=!!(docs[d]);
+          return `<div class="doc-item${isOk?' ok':''}" id="doc-${c.id}-${key}" onclick="toggleDoc('${c.id}','${d}')">
+            <div class="doc-dot" style="background:${isOk?'var(--accent)':'var(--border2)'}"></div>
+            <span>${d}</span>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="notes-section">
+        <div class="section-label">Observações</div>
+        <textarea onchange="updateNotes('${c.id}',this.value)" placeholder="Anotações...">${c.notes||''}</textarea>
+      </div>
+    </div>`;
+}
+
+function renderCard(id) {
+  const c=clients.find(x=>x.id===id);
+  const el=document.getElementById('card-'+id);
+  if(!el) return;
+  el.className='card'+(expanded.has(id)?' expanded':'');
+  el.innerHTML=cardHTML(c);
+}
+
+function updateMetrics() {
+  const total=clients.length;
+  const waiting=clients.filter(c=>c.status==='waiting').length;
+  const ready=clients.filter(c=>c.status==='ready').length;
+  const distributed=clients.filter(c=>c.status==='distributed').length;
+  document.getElementById('metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Total de clientes</div><div class="metric-value">${total}</div></div>
+    <div class="metric"><div class="metric-label">Aguardando docs</div><div class="metric-value amber">${waiting}</div></div>
+    <div class="metric"><div class="metric-label">Prontos para distribuir</div><div class="metric-value green">${ready}</div></div>
+    <div class="metric"><div class="metric-label">Distribuídos</div><div class="metric-value blue">${distributed}</div></div>`;
+}
+
+function render() {
+  updateMetrics(); updateLawsuitFilter();
+  const q=document.getElementById('search').value.toLowerCase();
+  const fs=document.getElementById('filterStatus').value;
+  const fl=document.getElementById('filterLawsuit').value;
+  const filtered=clients.filter(c=>{
+    if(q&&!c.name.toLowerCase().includes(q)) return false;
+    if(fs&&c.status!==fs) return false;
+    if(fl&&c.lawsuit!==fl) return false;
+    return true;
+  });
+  const list=document.getElementById('list');
+  if(!filtered.length) {
+    list.innerHTML=`<div class="empty"><div class="empty-icon">📂</div><h3>${clients.length===0?'Nenhum cliente':'Nenhum resultado encontrado'}</h3><p>${clients.length===0?'Clique em Novo cliente para começar.':'Tente outro nome ou filtro.'}</p></div>`;
+    return;
+  }
+  list.innerHTML=filtered.map(c=>`<div class="card${expanded.has(c.id)?' expanded':''}" id="card-${c.id}">${cardHTML(c)}</div>`).join('');
+}
+
+function exportCSV() {
+  const header=['Nome','Processo','Status','Número do processo',...DOCS,'Observações','Cadastrado em'];
+  const rows=clients.map(c=>{
+    const d=c.docs||{};
+    const l=getLawsuit(c.lawsuit);
+    return [c.name,l.name,STATUS_LABEL[c.status],c.process||'',...DOCS.map(doc=>d[doc]?'Sim':'Não'),c.notes||'',c.createdAt||''];
+  });
+  const csv=[header,...rows].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='clientes_'+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')+'.csv';
+  a.click();
+}
+
+loadData();
+</script>
+</body>
+</html>
